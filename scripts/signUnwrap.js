@@ -1,4 +1,4 @@
-const params = require('./params');
+const allParams = require('./params');
 
 const signer = async function (multisigContract, confirmingAccounts, txHash) {
     let signatureBytes = "0x"
@@ -13,6 +13,7 @@ const signer = async function (multisigContract, confirmingAccounts, txHash) {
 module.exports = function(callback) {
     (async () => {
         try {
+            const params = allParams(await web3.eth.net.getNetworkType());
             const contractAddress = process.env.CONTRACT_ADDRESS;
             const erc20Address = process.env.CONTRACT_ADDRESS;
             const accounts = await web3.eth.getAccounts();

@@ -7,8 +7,8 @@ contract('Multisig management', (accounts) => {
     let administrator = accounts[4];
 
     const createContract = async () => {
-        multisig = await WrapMultisig.new();
-        await multisig.setup(administrator, [accounts[0], accounts[1], accounts[2]], 2);
+        multisig = await WrapMultisig.new(administrator);
+        await multisig.setup([accounts[0], accounts[1], accounts[2]], 2, {from: administrator});
     }
 
     beforeEach(createContract)

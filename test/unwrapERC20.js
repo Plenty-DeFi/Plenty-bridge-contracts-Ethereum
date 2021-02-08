@@ -19,8 +19,8 @@ contract('Unwrap erc20', (accounts) => {
     }
 
     const createContract = async () => {
-        multisig = await WrapMultisig.new();
-        await multisig.setup(accounts[4], [accounts[0], accounts[1], accounts[2]], 2);
+        multisig = await WrapMultisig.new(accounts[4]);
+        await multisig.setup([accounts[0], accounts[1], accounts[2]], 2, {from: accounts[4]});
     }
 
     const unwrapTransaction = async (to, value, data, tezosTransaction, signers) => {

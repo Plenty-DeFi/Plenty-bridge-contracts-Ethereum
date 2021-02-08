@@ -48,19 +48,21 @@ contract WrapMultisig
 
     bytes32 public domainSeparator;
 
-    constructor() public {
+    constructor(address _administrator) public {
+        require(_administrator != address(0), "WRAP: INVALID_ADMINISTRATOR_PROVIDED");
+        administrator = _administrator;
     }
 
     function setup(
-        address _administrator,
-        address[] calldata _owners,
-        uint256 _threshold
+        address[] calldata owners,
+        uint256 threshold
     )
         external
+        authorized
     {
         require(domainSeparator == 0, "WRAP: DOMAIN_SEPARATOR_ALREADY_SET");
         domainSeparator = keccak256(abi.encode(DOMAIN_SEPARATOR_TYPEHASH, this));
-        _setup(_administrator, _owners, _threshold);
+        _setup(owners, threshold);
     }
 
     function wrapERC20(

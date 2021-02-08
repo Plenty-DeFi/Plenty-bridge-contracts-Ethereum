@@ -1,4 +1,4 @@
-const params = require('./params');
+const allParams = require('./params');
 
 const signer = async function (multisigContract, confirmingAccounts, to, value, data, tezosTransaction) {
     let txHash = await multisigContract.methods.getTransactionHash(to, value, data, tezosTransaction).call()
@@ -14,6 +14,7 @@ const signer = async function (multisigContract, confirmingAccounts, to, value, 
 module.exports = function(callback) {
     (async () => {
         try {
+            const params = allParams(await web3.eth.net.getNetworkType());
             const accounts = await web3.eth.getAccounts();
             const multisigContract = new web3.eth.Contract(params.wrapABI, params.contractAddress);
             const erc20Contract = new web3.eth.Contract(params.erc20ABI, params.erc20Address);

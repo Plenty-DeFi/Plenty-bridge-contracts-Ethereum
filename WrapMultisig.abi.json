@@ -1,6 +1,12 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_administrator",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -332,18 +338,13 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_administrator",
-        "type": "address"
-      },
-      {
         "internalType": "address[]",
-        "name": "_owners",
+        "name": "owners",
         "type": "address[]"
       },
       {
         "internalType": "uint256",
-        "name": "_threshold",
+        "name": "threshold",
         "type": "uint256"
       }
     ],

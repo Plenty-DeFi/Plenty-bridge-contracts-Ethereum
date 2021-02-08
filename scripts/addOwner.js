@@ -1,8 +1,9 @@
-const params = require('./params');
+const allParams = require('./params');
 
 module.exports = function(callback) {
     (async () => {
         try {
+            const params = allParams(await web3.eth.net.getNetworkType());
             const accounts = await web3.eth.getAccounts();
             const multisigContract = new web3.eth.Contract(params.wrapABI, params.contractAddress);
             const data = multisigContract.methods.addOwnerWithThreshold(accounts[5], 2).encodeABI();

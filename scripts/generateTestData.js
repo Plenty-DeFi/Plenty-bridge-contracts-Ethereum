@@ -1,9 +1,10 @@
 const {createERC20Contract, createERC721Contract} = require('../test/utils/helper');
-const params = require('./params');
+const allParams = require('./params');
 
 module.exports = function (callback) {
     (async () => {
         try {
+            const params = allParams(await web3.eth.net.getNetworkType());
             const accounts = await web3.eth.getAccounts();
             const {address: erc20} = await createERC20Contract(web3, accounts[0])
             const {address: erc721} = await createERC721Contract(web3, accounts[0])

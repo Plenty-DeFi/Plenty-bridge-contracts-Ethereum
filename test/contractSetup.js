@@ -2,16 +2,35 @@ const WrapMultisig = artifacts.require("./WrapMultisig.sol");
 
 contract('Contract setup management', (accounts) => {
     let multisig;
+    let administrator;
 
     beforeEach(async () => {
-        multisig = await WrapMultisig.new();
+        administrator = accounts[4];
+        multisig = await WrapMultisig.new(administrator);
+    });
+
+    it('Should setup contract administrator', async () => {
+        assert.equal(await multisig.getAdministrator(), administrator);
+    });
+
+    it('Shouldnt allow to setup contract if not administrator', async () => {
+        try {
+            await multisig.setup(
+                [accounts[0], accounts[2], accounts[2]], 2, {from: accounts[5]}
+            );
+        } catch (e) {
+            failed = true;
+            assert.equal(e.reason, "WRAP: METHOD_CAN_ONLY_BE_CALLED_BY_ADMINISTRATOR");
+        } finally {
+            assert.ok(failed, "Transaction execution should fail");
+        }
     });
 
     it('Should setup contract owners and threshold', async () => {
         let owners = [accounts[0], accounts[1], accounts[2]];
         let threshold = 2;
 
-        await multisig.setup(accounts[4], owners, threshold);
+        await multisig.setup(owners, threshold, {from: administrator});
 
         assert.deepEqual(await multisig.contract.methods.getOwners().call(), owners);
         assert.ok(await multisig.contract.methods.isOwner(accounts[0]).call());
@@ -21,20 +40,11 @@ contract('Contract setup management', (accounts) => {
         assert.equal(await multisig.contract.methods.getThreshold().call(), 2);
     });
 
-    it('Should setup contract administrator', async () => {
-        let administrator = accounts[4];
-
-        await multisig.setup(administrator, [accounts[0], accounts[1], accounts[2]], 2);
-
-        assert.equal(await multisig.getAdministrator(), administrator);
-    });
-
     it('Cant setup contract twice', async () => {
-        let administrator = accounts[4];
-        await multisig.setup(administrator, [accounts[0], accounts[1], accounts[2]], 2);
+        await multisig.setup([accounts[0], accounts[1], accounts[2]], 2, {from: administrator});
 
         try {
-            await multisig.setup(administrator, [accounts[0], accounts[1], accounts[2]], 2);
+            await multisig.setup([accounts[0], accounts[1], accounts[2]], 2, {from: administrator});
         } catch (e) {
             failed = true;
             assert.equal(e.reason, "WRAP: DOMAIN_SEPARATOR_ALREADY_SET");
@@ -46,7 +56,7 @@ contract('Contract setup management', (accounts) => {
     it('Shouldnt allow threshold bigger than owners length', async () => {
         try {
             await multisig.setup(
-                accounts[4], [accounts[0], accounts[1], accounts[2]], 4
+                [accounts[0], accounts[1], accounts[2]], 4, {from: administrator}
             );
         } catch (e) {
             failed = true;
@@ -59,7 +69,7 @@ contract('Contract setup management', (accounts) => {
     it('Shouldnt allow a 0 threshold', async () => {
         try {
             await multisig.setup(
-                accounts[4], [accounts[0], accounts[1], accounts[2]], 0
+                [accounts[0], accounts[1], accounts[2]], 0, {from: administrator}
             );
         } catch (e) {
             failed = true;
@@ -69,23 +79,10 @@ contract('Contract setup management', (accounts) => {
         }
     });
 
-    it('Shouldnt allow an invalid administrator', async () => {
-        try {
-            await multisig.setup(
-                "0x0000000000000000000000000000000000000000", [accounts[0], accounts[1], accounts[2]], 2
-            );
-        } catch (e) {
-            failed = true;
-            assert.equal(e.reason, "WRAP: INVALID_ADMINISTRATOR_PROVIDED");
-        } finally {
-            assert.ok(failed, "Transaction execution should fail");
-        }
-    });
-
     it('Shouldnt allow an invalid owner', async () => {
         try {
             await multisig.setup(
-                accounts[4], [accounts[0], "0x0000000000000000000000000000000000000000", accounts[2]], 2
+                [accounts[0], "0x0000000000000000000000000000000000000000", accounts[2]], 2, {from: administrator}
             );
         } catch (e) {
             failed = true;
@@ -98,7 +95,7 @@ contract('Contract setup management', (accounts) => {
     it('Shouldnt allow duplicates owners', async () => {
         try {
             await multisig.setup(
-                accounts[4], [accounts[0], accounts[2], accounts[2]], 2
+                [accounts[0], accounts[2], accounts[2]], 2, {from: administrator}
             );
         } catch (e) {
             failed = true;

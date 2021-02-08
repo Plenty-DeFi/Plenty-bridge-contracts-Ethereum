@@ -18,13 +18,12 @@ contract MultisigManager {
         _;
     }
 
-    function _setup(address _administrator, address[] memory _owners, uint256 _threshold)
+    function _setup(address[] memory _owners, uint256 _threshold)
         internal
     {
         require(threshold == 0, "WRAP: CONTRACT_ALREADY_SETUP");
         require(_threshold <= _owners.length, "WRAP: THRESHOLD_CANNOT_EXCEED_OWNER_COUNT");
         require(_threshold >= 1, "WRAP: THRESHOLD_NEEED_TO_BE_GREETER_THAN_0");
-        require(_administrator != address(0) && _administrator != SENTINEL_OWNERS, "WRAP: INVALID_ADMINISTRATOR_PROVIDED");
         address currentOwner = SENTINEL_OWNERS;
         for (uint256 i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
@@ -36,7 +35,6 @@ contract MultisigManager {
         owners[currentOwner] = SENTINEL_OWNERS;
         ownerCount = _owners.length;
         threshold = _threshold;
-        administrator = _administrator;
     }
 
     function addOwnerWithThreshold(
