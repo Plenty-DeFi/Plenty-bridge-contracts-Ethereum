@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/bender-labs/wrap-eth-contract/workflows/wrap-eth-contract/badge.svg)](https://github.com/bender-labs/wrap-eth-contract/actions)
+
 # ETH Wrap contracts
 
 ## Compile contracts
