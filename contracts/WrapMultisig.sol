@@ -5,10 +5,6 @@ import "./external/SafeMath.sol";
 import "./interfaces/ERC721TokenReceiver.sol";
 
 /// @title Wrap protocol locking contract, based on Gnosis Safe contract work
-/// @author Stefan George - <stefan@gnosis.io>
-/// @author Richard Meissner - <richard@gnosis.io>
-/// @author Ricardo Guilherme Schmidt - (Status Research & Development GmbH) - Gas Token Payment
-/// @author Charles Couillard - <charles@benderlabs.io>
 contract WrapMultisig
     is MultisigManager, ERC721TokenReceiver {
 

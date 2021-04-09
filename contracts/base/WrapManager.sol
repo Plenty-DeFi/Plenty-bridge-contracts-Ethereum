@@ -3,9 +3,6 @@ pragma solidity >=0.7.0 <0.8.0;
 
 /// @title MultisigManager - Manages a set of owners and a threshold to perform actions
 /// @notice Owners and threshold is managed by the administrator
-/// @author Stefan George - <stefan@gnosis.pm>
-/// @author Richard Meissner - <richard@gnosis.pm>
-/// @author Charles Couillard - <charles@benderlabs.io>
 contract MultisigManager {
 
     event AddedOwner(address owner);
