@@ -4,6 +4,7 @@ import "./base/WrapManager.sol";
 import "./external/SafeMath.sol";
 import "./interfaces/ERC721TokenReceiver.sol";
 
+/// @title Wrap protocol locking contract, based on Gnosis Safe contract work
 contract WrapMultisig
     is MultisigManager, ERC721TokenReceiver {
 
@@ -49,11 +50,17 @@ contract WrapMultisig
 
     bytes32 public domainSeparator;
 
+    /// @notice The administrator will be allowed to modify multisig members and quorum
+    /// @param _administrator Administrator of the multisig
     constructor(address _administrator) {
         require(_administrator != address(0), "WRAP: INVALID_ADMINISTRATOR_PROVIDED");
         administrator = _administrator;
     }
 
+    /// @notice Initialize multisig members and threshold
+    /// @dev This function can only be called once and set the domain separator
+    /// @param owners Initial members of the multisig
+    /// @param threshold Threshold of the multisig
     function setup(
         address[] calldata owners,
         uint256 threshold
@@ -66,6 +73,10 @@ contract WrapMultisig
         _setup(owners, threshold);
     }
 
+    /// @notice Transfer ERC20 tokens to the custody on behalf of the user
+    /// @param token Token contract address
+    /// @param amount Amount to put in custody
+    /// @param tezosAddress Destination address of the wrap on Tezos blockchain
     function wrapERC20(
         address token,
         uint256 amount,
@@ -90,6 +101,10 @@ contract WrapMultisig
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'WRAP: ERC20_TRANSFER_FAILED');
     }
 
+    /// @notice Transfer ERC721 tokens to the custody on behalf of the user
+    /// @param token Token contract address
+    /// @param tokenId Id of the NFT to transfer
+    /// @param tezosAddress Destination address of the wrap on Tezos blockchain
     function wrapERC721(
         address token,
         uint256 tokenId,
@@ -113,6 +128,13 @@ contract WrapMultisig
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'WRAP: ERC721_TRANSFER_FAILED');
     }
 
+    /// @notice Allow to execute an unwrap transaction signed by multisig members
+    /// @dev tezosOperation is used as a nonce to protect against replay attacks
+    /// @param to Destination address of the transaction
+    /// @param value Ether value
+    /// @param data Data paylaod
+    /// @param tezosOperation Identifier of the tezos operation used to burn corresponding wrapped assets
+    /// @param signatures Packed signature data
     function execTransaction(
         address to,
         uint256 value,
@@ -150,6 +172,13 @@ contract WrapMultisig
         }
     }
 
+    /// @dev divides bytes signature into `uint8 v, bytes32 r, bytes32 s`
+    /// @notice Make sure to perform a bounds check for @param pos, to avoid out of bounds access on @param signatures
+    /// @param pos which signature to read. A prior bounds check of this parameter should be performed, to avoid out of bounds access
+    /// @param signatures concatenated rsv signatures
+    /// @return v v
+    /// @return r r
+    /// @return s s
     function _signatureSplit(
         bytes memory signatures,
         uint256 pos
@@ -174,6 +203,9 @@ contract WrapMultisig
         }
     }
 
+    /// @dev Checks whether the signature provided is valid for the provided hash. Will revert otherwise.
+    /// @param dataHash Hash of the data
+    /// @param signatures Signature data that should be verified.
     function _checkSignatures(
         bytes32 dataHash,
         bytes memory signatures
@@ -201,6 +233,12 @@ contract WrapMultisig
         }
     }
 
+    /// @notice Returns the bytes that are hashed to be signed by owners
+    /// @param to Destination address
+    /// @param value Ether value
+    /// @param data Data payload
+    /// @param tezosOperation Identifier of the tezos operation used to burn corresponding wrapped assets
+    /// @return Transaction hash bytes
     function encodeTransactionData(
         address to,
         uint256 value,
@@ -217,6 +255,12 @@ contract WrapMultisig
         return abi.encodePacked(bytes1(0x19), bytes1(0x01), domainSeparator, wrapTxHash);
     }
 
+    /// @notice Returns hash to be signed by owners
+    /// @param to Destination address
+    /// @param value Ether value
+    /// @param data Data payload
+    /// @param tezosOperation Identifier of the tezos operation used to burn corresponding wrapped assets
+    /// @return Transaction hash
     function getTransactionHash(
         address to,
         uint256 value,
@@ -230,6 +274,9 @@ contract WrapMultisig
         return keccak256(encodeTransactionData(to, value, data, tezosOperation));
     }
 
+    /// @notice Check if an unwrap were already processed
+    /// @param tezosOperation Identifier to check
+    /// @return true if already processed, false otherwise
     function isTezosOperationProcessed(
         string memory tezosOperation
     )
@@ -240,6 +287,7 @@ contract WrapMultisig
         return tezosOperations[tezosOperation];
     }
 
+    /// @notice Allow ERC721 safe transfers
     function onERC721Received(
         address,
         address,
