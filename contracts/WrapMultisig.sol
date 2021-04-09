@@ -1,4 +1,5 @@
-pragma solidity >=0.5.0 <0.7.0;
+// SPDX-License-Identifier: LGPL-3.0-only
+pragma solidity >=0.7.0 <0.8.0;
 import "./base/WrapManager.sol";
 import "./external/SafeMath.sol";
 import "./interfaces/ERC721TokenReceiver.sol";
@@ -48,7 +49,7 @@ contract WrapMultisig
 
     bytes32 public domainSeparator;
 
-    constructor(address _administrator) public {
+    constructor(address _administrator) {
         require(_administrator != address(0), "WRAP: INVALID_ADMINISTRATOR_PROVIDED");
         administrator = _administrator;
     }
@@ -213,7 +214,7 @@ contract WrapMultisig
         bytes32 wrapTxHash = keccak256(
             abi.encode(UNWRAP_TX_TYPEHASH, to, value, keccak256(data), tezosOperation)
         );
-        return abi.encodePacked(byte(0x19), byte(0x01), domainSeparator, wrapTxHash);
+        return abi.encodePacked(bytes1(0x19), bytes1(0x01), domainSeparator, wrapTxHash);
     }
 
     function getTransactionHash(
@@ -245,6 +246,8 @@ contract WrapMultisig
         uint256,
         bytes calldata
     )
+        override
+        pure
         external
         returns(bytes4)
     {
