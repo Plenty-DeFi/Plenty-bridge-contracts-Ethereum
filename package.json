@@ -41,7 +41,7 @@
     "@truffle/hdwallet-provider": "^1.0.0",
     "dotenv": "^8.0.0",
     "shelljs": "^0.8.3",
-    "solc": "0.5.17",
+    "solc": "0.7.6",
     "truffle": "^5.1.63"
   },
   "resolutions": {

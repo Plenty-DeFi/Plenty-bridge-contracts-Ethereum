@@ -1,9 +1,10 @@
 const erc20Contract = `
-pragma solidity >=0.5.0 <0.7.0;
+// SPDX-License-Identifier: LGPL-3.0-only
+pragma solidity >=0.7.0 <0.8.0;
 contract TestToken {
     mapping (address => uint) public balances;
     mapping(address => mapping(address => uint256)) public allowance;
-    constructor() public {
+    constructor() {
         balances[msg.sender] = 10000000000000000000;
     }
     function transfer(address to, uint value) public returns (bool) {
@@ -27,8 +28,9 @@ contract TestToken {
 }`;
 
 const erc721Contract = `
-pragma solidity >=0.5.0 <0.7.0;
-contract IERC721Receiver {
+// SPDX-License-Identifier: LGPL-3.0-only
+pragma solidity >=0.7.0 <0.8.0;
+abstract contract IERC721Receiver {
   function onERC721Received(
     address operator,
     address from,
@@ -36,6 +38,7 @@ contract IERC721Receiver {
     bytes memory data
   )
     public
+    virtual
     returns(bytes4);
 }
 library SafeMath {
