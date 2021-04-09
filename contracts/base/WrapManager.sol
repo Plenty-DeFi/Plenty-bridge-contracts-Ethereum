@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 pragma solidity >=0.7.0 <0.8.0;
 
+/// @title MultisigManager - Manages a set of owners and a threshold to perform actions
+/// @notice Owners and threshold is managed by the administrator
+/// @author Stefan George - <stefan@gnosis.pm>
+/// @author Richard Meissner - <richard@gnosis.pm>
+/// @author Charles Couillard - <charles@benderlabs.io>
 contract MultisigManager {
 
     event AddedOwner(address owner);
@@ -19,6 +24,9 @@ contract MultisigManager {
         _;
     }
 
+    /// @dev Setup function sets initial storage of contract
+    /// @param _owners List of owners
+    /// @param _threshold Number of required confirmations for a Wrap transaction
     function _setup(address[] memory _owners, uint256 _threshold)
         internal
     {
@@ -38,6 +46,10 @@ contract MultisigManager {
         threshold = _threshold;
     }
 
+    /// @dev Allows to add a new owner and update the threshold at the same time
+    /// @notice Adds the owner `owner` and updates the threshold to `_threshold`
+    /// @param owner New owner address
+    /// @param _threshold New threshold
     function addOwnerWithThreshold(
         address owner,
         uint256 _threshold
@@ -55,6 +67,11 @@ contract MultisigManager {
             changeThreshold(_threshold);
     }
 
+    /// @dev Allows to remove an owner and update the threshold at the same time
+    /// @notice Removes the owner `owner` and updates the threshold to `_threshold`
+    /// @param prevOwner Owner that pointed to the owner to be removed in the linked list
+    /// @param owner Owner address to be removed
+    /// @param _threshold New threshold
     function removeOwner(
         address prevOwner,
         address owner,
@@ -74,6 +91,11 @@ contract MultisigManager {
             changeThreshold(_threshold);
     }
 
+    /// @dev Allows to swap/replace an owner with another address
+    /// @notice Replaces the owner `oldOwner` with `newOwner`
+    /// @param prevOwner Owner that pointed to the owner to be replaced in the linked list
+    /// @param oldOwner Owner address to be replaced
+    /// @param newOwner New owner address
     function swapOwner(
         address prevOwner,
         address oldOwner,
@@ -93,6 +115,9 @@ contract MultisigManager {
         emit AddedOwner(newOwner);
     }
 
+    /// @dev Allows to update the number of required confirmations
+    /// @notice Changes the threshold to `_threshold`
+    /// @param _threshold New threshold
     function changeThreshold(
         uint256 _threshold
     )
@@ -105,6 +130,8 @@ contract MultisigManager {
         emit ChangedThreshold(threshold);
     }
 
+    /// @notice Get multisig threshold
+    /// @return Threshold
     function getThreshold()
         public
         view
@@ -113,6 +140,8 @@ contract MultisigManager {
         return threshold;
     }
 
+    /// @notice Allow to check if an address is owner of the multisig
+    /// @return True if owner, false otherwise
     function isOwner(address owner)
         public
         view
@@ -121,6 +150,8 @@ contract MultisigManager {
         return owner != SENTINEL_OWNERS && owners[owner] != address(0);
     }
 
+    /// @notice Get multisig members
+    /// @return Owners list
     function getOwners()
         public
         view
@@ -138,6 +169,8 @@ contract MultisigManager {
         return array;
     }
 
+    /// @notice Get current multisig administrator
+    /// @return Administrator address
     function getAdministrator()
         public
         view

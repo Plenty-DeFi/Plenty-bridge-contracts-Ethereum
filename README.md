@@ -1,4 +1,6 @@
-# ETH Wrap contracts
+# Wrap protocol Ethereum contract
+
+Wrap protocol Ethereum locking contract, based on [Gnosis Safe](https://github.com/gnosis/safe-contracts) contracts.
 
 ## Compile contracts
 
@@ -16,3 +18,7 @@
 
 `INFURA_TOKEN=  MNEMONIC="" yarn do goerli scripts/try.js`
 ``
+
+##License
+
+Smart contracts are released under LGPL-3.0
