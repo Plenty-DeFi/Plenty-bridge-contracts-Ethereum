@@ -8,7 +8,7 @@ module.exports = (network) => {
             erc721Address: "0x79AeFe53ddF35978B4f1C5fF471803D899421B15"
         },
         'rinkeby': {
-            contractAddress: "0x352488cAaDf763Acaa41fB05E4b5B3a45647C8D5",
+            contractAddress: "0xe8E0c5BC47c11c7b7E4b02B71ad4d7bCFd330067",
             erc20Address: "0xFab46E002BbF0b4509813474841E0716E6730136",
             erc721Address: "0x79AeFe53ddF35978B4f1C5fF471803D899421B15"
         }

@@ -46,6 +46,11 @@
   },
   "resolutions": {
     "bitcore-lib": "8.1.1",
-    "run-with-testrpc/ganache-cli": "6.12.2"
+    "run-with-testrpc/ganache-cli": "6.12.2",
+    "y18n": "^4.0.1",
+    "node-fetch": "^2.6.1",
+    "bl": "^1.2.3",
+    "elliptic": "^6.5.4",
+    "lodash": "^4.17.19"
   }
 }
