@@ -45,7 +45,6 @@ async function compile(source) {
     let solcData = await solc.compile(input);
     let output = JSON.parse(solcData);
     if (!output['contracts']) {
-        console.log(output);
         throw Error("Could not compile contract")
     }
     let fileOutput = output['contracts']['tmp.sol']
