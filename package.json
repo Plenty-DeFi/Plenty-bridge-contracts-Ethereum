@@ -58,6 +58,8 @@
     "yargs": "^16.1.1"
   },
   "resolutions": {
-    "bitcore-lib": "8.1.1"
+    "bitcore-lib": "8.1.1",
+    "elliptic": "^6.5.4",
+    "node-fetch": "^2.6.1"
   }
 }
