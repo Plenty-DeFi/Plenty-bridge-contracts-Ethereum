@@ -17,8 +17,11 @@ const argv = yargs
 dotenv.config();
 const { INFURA_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } = process.env;
 
+const DEFAULT_MNEMONIC =
+    "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+
 const sharedNetworkConfig: HttpNetworkUserConfig = {};
-sharedNetworkConfig.accounts = {mnemonic: MNEMONIC!}
+sharedNetworkConfig.accounts = {mnemonic: MNEMONIC || DEFAULT_MNEMONIC}
 
 if (["mainnet", "rinkeby", "kovan", "goerli"].includes(argv.network) && INFURA_KEY === undefined) {
     throw new Error(
