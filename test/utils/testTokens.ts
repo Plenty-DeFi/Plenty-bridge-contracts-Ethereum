@@ -1,4 +1,4 @@
-const erc20Contract = `
+export const erc20Contract = `
 // SPDX-License-Identifier: LGPL-3.0-only
 pragma solidity >=0.7.0 <0.8.0;
 contract TestToken {
@@ -27,7 +27,7 @@ contract TestToken {
     }
 }`;
 
-const erc721Contract = `
+export const erc721Contract = `
 // SPDX-License-Identifier: LGPL-3.0-only
 pragma solidity >=0.7.0 <0.8.0;
 abstract contract IERC721Receiver {
@@ -266,8 +266,3 @@ contract ERC721 {
   }
 }
 `
-
-module.exports = {
-    erc20Contract,
-    erc721Contract
-}
