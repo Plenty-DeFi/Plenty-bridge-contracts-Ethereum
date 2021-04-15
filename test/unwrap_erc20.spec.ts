@@ -15,7 +15,6 @@ describe("Unwrap erc20", async () => {
         const multisig = await hre.ethers.getContractFactory("WrapMultisig");
         const contract = multisig.attach(multisigDeployment.address);
         const multisigAdmin = contract.connect(accounts[4]);
-        await multisigAdmin.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         const erc20Token = await deployContract(accounts[0], erc20Contract);
         return {
             multisig: multisigAdmin,
@@ -40,6 +39,7 @@ describe("Unwrap erc20", async () => {
 
     it('Should withdraw ERC20 with 2 signers', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[2].address]
         const destination = "0x95ADDFfF52B727E0d2317a2f1f255350f743813E";
@@ -54,6 +54,7 @@ describe("Unwrap erc20", async () => {
 
     it('Should withdraw ERC20 with 3 signers', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[1].address, accounts[2].address]
         const destination = "0xA60aea45459B168D833F913D5901AC84D5d554D5";
@@ -68,6 +69,7 @@ describe("Unwrap erc20", async () => {
 
     it('Shouldnt withdraw same tezos transaction twice', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[2].address]
         const destination = "0x95ADDFfF52B727E0d2317a2f1f255350f743813E";
@@ -81,6 +83,7 @@ describe("Unwrap erc20", async () => {
 
     it('Shouldnt withdraw on threshold not reached', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address]
         const destination = "0xF3fAa7E80d6F21fBf667d0bC7F74eEd6594Cb1b3";
@@ -93,6 +96,7 @@ describe("Unwrap erc20", async () => {
 
     it('Shouldnt withdraw more than erc20 total balance', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[2].address];
         const destination = "0x427B055cDDb82e57D03A3a2B00151402cC7b4247";
@@ -107,6 +111,7 @@ describe("Unwrap erc20", async () => {
 
     it('Shouldnt withdraw on bad signers', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[3].address];
         const destination = "0x7153E54E8ABbf60Bb8ADaff1f91283Ed49d37a56";
@@ -117,8 +122,21 @@ describe("Unwrap erc20", async () => {
             .to.revertedWith("WRAP: INVALID_OWNER_PROVIDED");
     });
 
+    it('Shouldnt withdraw if multisig not setup bad signers', async () => {
+        const { multisig, erc20Token } = await deployMultisig();
+        await erc20Token.transfer(multisig.address, 100);
+        let signers = [accounts[0].address, accounts[2].address];
+        const destination = "0x7153E54E8ABbf60Bb8ADaff1f91283Ed49d37a56";
+        const data = iface.encodeFunctionData("transfer", [destination, 10]);
+        const signatures = await signer(multisig, signers, erc20Token.address, 0, data, "0x1234");
+
+        await expect(multisig.execTransaction(erc20Token.address, 0, data, "0x1234", signatures))
+            .to.revertedWith("WRAP: THRESHOLD_NOT_DEFINED");
+    });
+
     it('Should say if tezos transaction already processed', async () => {
         const { multisig, erc20Token } = await deployMultisig();
+        await multisig.setup([accounts[0].address, accounts[1].address, accounts[2].address], 2);
         await erc20Token.transfer(multisig.address, 100);
         let signers = [accounts[0].address, accounts[2].address]
         const destination = "0x95ADDFfF52B727E0d2317a2f1f255350f743813E";
