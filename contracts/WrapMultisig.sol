@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 pragma solidity >=0.7.0 <0.8.0;
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/cryptography/ECDSA.sol";
 import "./base/WrapManager.sol";
-import "./external/SafeMath.sol";
 import "./interfaces/ERC721TokenReceiver.sol";
 
 /// @title Wrap protocol locking contract, based on Gnosis Safe contract work
 contract WrapMultisig is MultisigManager, ERC721TokenReceiver {
     using SafeMath for uint256;
+    using ECDSA for bytes32;
 
     string public constant NAME = "Wrap multisig";
     string public constant VERSION = "1.0.0";
@@ -239,17 +241,7 @@ contract WrapMultisig is MultisigManager, ERC721TokenReceiver {
         uint256 i;
         for (i = 0; i < _threshold; i++) {
             (v, r, s) = _signatureSplit(signatures, i);
-            currentOwner = ecrecover(
-                keccak256(
-                    abi.encodePacked(
-                        "\x19Ethereum Signed Message:\n32",
-                        dataHash
-                    )
-                ),
-                v,
-                r,
-                s
-            );
+            currentOwner = dataHash.toEthSignedMessageHash().recover(v, r, s);
             require(
                 currentOwner > lastOwner &&
                     owners[currentOwner] != address(0) &&
