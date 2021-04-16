@@ -19,6 +19,13 @@ describe("Contract setup", async () => {
         expect(await multisig.getAdministrator()).to.equal("0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65");
     })
 
+    it('shouldnt setup contract administrator with 0 address', async () => {
+        const multisig = await hre.ethers.getContractFactory("WrapMultisig");
+
+        await expect(multisig.deploy("0x0000000000000000000000000000000000000000"))
+            .to.revertedWith("WRAP: INVALID_ADMINISTRATOR_PROVIDED");
+    })
+
     it('shouldnt allow to setup contract if not administrator', async () => {
         const contract = await deployMultisig();
         const multisig = contract.connect(accounts[1]);
