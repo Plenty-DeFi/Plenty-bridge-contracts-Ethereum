@@ -14,7 +14,7 @@ const deploy: DeployFunction = async function (
         from: deployer,
         args: [administrator(chainId)],
         log: true,
-        deterministicDeployment: true,
+        proxy: false
     });
 };
 
