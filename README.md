@@ -1,9 +1,7 @@
-[![Actions Status](https://github.com/bender-labs/wrap-eth-contract/workflows/wrap-eth-contract/badge.svg)](https://github.com/bender-labs/wrap-eth-contract/actions)
-[![Coverage Status](https://coveralls.io/repos/github/bender-labs/wrap-eth-contract/badge.svg?branch=main)](https://coveralls.io/github/bender-labs/wrap-eth-contract?branch=main)
 
-# Wrap protocol Ethereum contract
+# Plenty Bridge Ethereum contract
 
-Wrap protocol Ethereum locking contract, based on [Gnosis Safe](https://github.com/gnosis/safe-contracts) contracts.
+Plenty Bridge Ethereum locking contract, based on [Gnosis Safe](https://github.com/gnosis/safe-contracts) contracts.
 
 ## Compile contracts
 
