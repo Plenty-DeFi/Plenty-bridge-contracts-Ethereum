@@ -22,4 +22,4 @@ Plenty Bridge Ethereum locking contract, based on [Gnosis Safe](https://github.c
 
 ##License
 
-Smart contracts are released under LGPL-3.0
+Smart contracts are released under MIT License
